@@ -19,16 +19,13 @@ import com.android.netmusic.activity.MainActivity;
 public class CommendFragment extends Fragment {
 
     private MainActivity mMainActivity;
-    private static CommendFragment instance;
     /**
      * 单例
      * @param mainActivity
      * @return
      */
     public static CommendFragment getInstance(MainActivity mainActivity){
-        if(instance==null){
-            instance = new CommendFragment();
-        }
+        CommendFragment instance = new CommendFragment();
         instance.setMainActivity(mainActivity);
         return instance;
     }

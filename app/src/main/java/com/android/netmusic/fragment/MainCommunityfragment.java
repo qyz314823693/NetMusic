@@ -18,16 +18,13 @@ import com.android.netmusic.activity.MainActivity;
 public class MainCommunityfragment extends Fragment {
 
     private MainActivity mMainActivity;
-    private static MainCommunityfragment instance;
     /**
      * 单例
      * @param mainActivity
      * @return
      */
     public static MainCommunityfragment getInstance(MainActivity mainActivity){
-        if(instance==null){
-            instance = new MainCommunityfragment();
-        }
+        MainCommunityfragment instance = new MainCommunityfragment();
         instance.setMainActivity(mainActivity);
         return instance;
     }

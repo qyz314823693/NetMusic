@@ -19,16 +19,13 @@ import com.android.netmusic.activity.MainActivity;
 public class RankFragment extends Fragment {
 
     private MainActivity mMainActivity;
-    private static RankFragment instance;
     /**
      * 单例
      * @param mainActivity
      * @return
      */
     public static RankFragment getInstance(MainActivity mainActivity){
-        if(instance==null){
-            instance = new RankFragment();
-        }
+        RankFragment instance = new RankFragment();
         instance.setMainActivity(mainActivity);
         return instance;
     }
