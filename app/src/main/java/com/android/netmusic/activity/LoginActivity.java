@@ -3,90 +3,64 @@ package com.android.netmusic.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 
 import com.android.netmusic.R;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 
-public class LoginActivity extends AppCompatActivity {
-
-    static LoginActivity sLoginActivity;
-
-    LinearLayout mLoginVisitor;
-    Button mLogin;
-    Button mRegister;
-    Button mWechat;
-    Button mQQ;
-    Button mWeibo;
-    Button mNetease;
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    private EditText accountEditText;
+    private EditText psdEditText;
+    private Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        init();
+    }
 
-        mLoginVisitor = (LinearLayout) findViewById(R.id.login_visitor);
-        mLogin = (Button) findViewById(R.id.login_button_phoneNumber);
-        mRegister = (Button) findViewById(R.id.login_button_register);
-        mWechat = (Button) findViewById(R.id.login_button_wechat);
-        mQQ = (Button) findViewById(R.id.login_button_qq);
-        mWeibo = (Button) findViewById(R.id.login_button_weibo);
-        mNetease = (Button) findViewById(R.id.login_button_netease);
+    private void init() {
+        accountEditText = (EditText) findViewById(R.id.lqm_login_edit_account);
+        psdEditText = (EditText) findViewById(R.id.lqm_login_edit_psd);
+        loginBtn = (Button) findViewById(R.id.lqm_login_btn_login);
 
-        mLoginVisitor.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(this);
+    }
+
+    private void login() {
+        EMClient.getInstance().login(accountEditText.getText().toString(), psdEditText.getText().toString(), new EMCallBack() {//回调
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        mLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, LoginByPhoneNumberActivity.class);
+            public void onSuccess() {
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+                Log.d("main", "登录聊天服务器成功！");
+                Intent intent = new Intent(LoginActivity.this,ChatActivity.class);
                 startActivity(intent);
             }
-        });
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        mWechat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            public void onProgress(int progress, String status) {
 
             }
-        });
 
-        mQQ.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onError(int code, String message) {
+                Log.d("main", "登录聊天服务器失败！");
             }
         });
+    }
 
-        mWeibo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        mNetease.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        sLoginActivity=LoginActivity.this;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.lqm_login_btn_login:
+                login();
+                break;
+        }
     }
 }
