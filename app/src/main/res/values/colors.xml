@@ -4,19 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="base_red2">#CD3C3D</color>
-    <color name="base_red">#C34141</color>
+    <color name="base_red">#CD3C3D</color>
     <color name="base_title_text">#666666</color>
-    <color name="base_line">#B8B8B8</color>
-    <color name="qq_blue">#339FDE</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="draw_gray">#707070</color>
-    <color name="more_bg">#AAABAC</color>
-
-    <color name="white_text">#fafafa</color>
-
-    <color name="current_play_musicname">#303030</color>
-    <color name="current_play_line">#707070</color>
-    <color name="current_play_aritst">#707070</color>
+    <!--登录Activity要用到的颜色 陈铭键-->
+    <color name="login_edit_text_normal">#373737</color>
+    <color name="login_edit_text_clear">#BEBEBE</color>
 </resources>
