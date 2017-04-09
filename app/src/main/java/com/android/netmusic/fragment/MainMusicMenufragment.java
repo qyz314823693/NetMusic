@@ -24,13 +24,16 @@ public class MainMusicMenufragment extends Fragment {
     private MusicMenuFragmentAdapter mMusicMenuFragmentAdapter;
     private TabLayout mTabLayout;
     private MainActivity mMainActivity;
+    private static MainMusicMenufragment instance;
     /**
      * 单例
      * @param mainActivity
      * @return
      */
     public static MainMusicMenufragment getInstance(MainActivity mainActivity){
-        MainMusicMenufragment instance = new MainMusicMenufragment();
+        if(instance==null){
+            instance = new MainMusicMenufragment();
+        }
         instance.setMainActivity(mainActivity);
         return instance;
     }
@@ -51,6 +54,9 @@ public class MainMusicMenufragment extends Fragment {
         return view;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //初始化界面UI布局///////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * 初始化布局
      */
@@ -65,6 +71,8 @@ public class MainMusicMenufragment extends Fragment {
         mTabLayout.getTabAt(2).setText(R.string.radio);
         mTabLayout.getTabAt(3).setText(R.string.rank);
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //以下是各组员添加代码,添加代码注明功能,自己的姓名                                              //

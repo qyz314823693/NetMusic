@@ -15,4 +15,31 @@
     <string name="username">用户名_1234567</string>
     <string name="have_reg">已签到</string>
     <string name="no_reg">点击签到</string>
+    <string name="send_msg">发送</string>
+    <string name="local_music">本地音乐</string>
+    <string name="recent_play">最近播放</string>
+    <string name="down_manager">下载管理</string>
+    <string name="my_tv">我的电台</string>
+    <string name="my_like">我的收藏</string>
+    <string name="local_music_single">单曲</string>
+    <string name="local_music_artist">歌手</string>
+    <string name="local_music_ablum">专辑</string>
+    <string name="local_music_file">文件夹</string>
+    <string name="local_music_playall">播放全部</string>
+    <string name="local_music_select">多选</string>
+    <string name="musicname">歌名</string>
+    <string name="musicartist">歌手</string>
+
+
+    <string name="Is_the_registered">Registering..</string>
+    <string name="Two_input_password">Inconsistent password, please enter again!</string>
+    <string name="Confirm_password_cannot_be_empty">Confirm password cannot be empty!</string>
+    <string name="Password_cannot_be_empty">Password cannot be empty!</string>
+    <string name="User_name_cannot_be_empty">User name cannot be empty!</string>
+    <string name="Registration_failed">Registration failed</string>
+    <string name="illegal_user_name">Illegal user name</string>
+    <string name="registration_failed_without_permission">Registration failed, without permission!</string>
+    <string name="User_already_exists">User already existed!</string>
+    <string name="network_anomalies">Network is not available, please check the network!</string>
+    <string name="Registered_successfully">Registered successfully</string>
 </resources>
