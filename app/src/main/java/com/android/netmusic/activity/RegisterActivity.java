@@ -1,160 +1,114 @@
 package com.android.netmusic.activity;
 
-import android.content.Intent;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.netmusic.R;
-import com.android.netmusic.tool.CheckValidity;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 
-public class RegisterActivity extends AppCompatActivity {
-
-    LinearLayout mBack;
-    LinearLayout mClearPhoneNumber;
-    LinearLayout mClearPassword;
-    Button mFinish;
-    Button mWechat;
-    Button mQQ;
-    Button mWeibo;
-    Button mNetease;
-    EditText mPhoneNumber;
-    EditText mPassword;
-    TextView mCode;
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+    private EditText accountEditText;
+    private EditText psdEditText;
+    private EditText rePsdEditText;
+    private Button finishBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        init();
+    }
 
-        mCode = (TextView) findViewById(R.id.register_phone_number_code);
+    private void init() {
+        accountEditText = (EditText) findViewById(R.id.lqm_register_edit_account);
+        psdEditText = (EditText) findViewById(R.id.lqm_register_edit_psd);
+        rePsdEditText = (EditText) findViewById(R.id.lqm_register_edit_repsd);
+        finishBtn = (Button) findViewById(R.id.lqm_register_btn_finish);
 
-        mBack = (LinearLayout) findViewById(R.id.register_back);
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        finishBtn.setOnClickListener(this);
+    }
 
-        mFinish = (Button) findViewById(R.id.register_button_finish);
-        mFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mPhoneNumber.getText().toString().length()!=11|| !CheckValidity.checkPhoneNumber(mPhoneNumber.getText().toString())){
-                    Toast.makeText(RegisterActivity.this,"请输入正确的手机号",Toast.LENGTH_SHORT).show();
-                    mPhoneNumber.requestFocus();
-                }else if(mPassword.getText().toString().length()<6){
-                    Toast.makeText(RegisterActivity.this,"请输入多于六位的密码",Toast.LENGTH_SHORT).show();
-                    mPassword.requestFocus();
-                }else{
-                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    if (LoginActivity.sLoginActivity != null) LoginActivity.sLoginActivity.finish();
-                    finish();
+    public void register() {
+        final String username = accountEditText.getText().toString().trim();
+        final String pwd = psdEditText.getText().toString().trim();
+        String confirm_pwd = rePsdEditText.getText().toString().trim();
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_empty), Toast.LENGTH_SHORT).show();
+            accountEditText.requestFocus();
+            return;
+        } else if (TextUtils.isEmpty(pwd)) {
+            Toast.makeText(this, getResources().getString(R.string.Password_cannot_be_empty), Toast.LENGTH_SHORT).show();
+            psdEditText.requestFocus();
+            return;
+        } else if (TextUtils.isEmpty(confirm_pwd)) {
+            Toast.makeText(this, getResources().getString(R.string.Confirm_password_cannot_be_empty), Toast.LENGTH_SHORT).show();
+            rePsdEditText.requestFocus();
+            return;
+        } else if (!pwd.equals(confirm_pwd)) {
+            Toast.makeText(this, getResources().getString(R.string.Two_input_password), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(pwd)) {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage(getResources().getString(R.string.Is_the_registered));
+            pd.show();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        // call method in SDK
+                        EMClient.getInstance().createAccount(username, pwd);
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                if (!RegisterActivity.this.isFinishing())
+                                    pd.dismiss();
+                                // save current user
+                                //DemoHelper.getInstance().setCurrentUserName(username);
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    } catch (final HyphenateException e) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                if (!RegisterActivity.this.isFinishing())
+                                    pd.dismiss();
+                                int errorCode = e.getErrorCode();
+                                if (errorCode == EMError.NETWORK_ERROR) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_anomalies), Toast.LENGTH_SHORT).show();
+                                } else if (errorCode == EMError.USER_ALREADY_EXIST) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.User_already_exists), Toast.LENGTH_SHORT).show();
+                                } else if (errorCode == EMError.USER_AUTHENTICATION_FAILED) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.registration_failed_without_permission), Toast.LENGTH_SHORT).show();
+                                } else if (errorCode == EMError.USER_ILLEGAL_ARGUMENT) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.illegal_user_name), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registration_failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            }).start();
 
-        mWechat = (Button) findViewById(R.id.login_button_wechat);
-        mWechat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        }
+    }
 
-            }
-        });
-
-        mQQ = (Button) findViewById(R.id.login_button_qq);
-        mQQ.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        mWeibo = (Button) findViewById(R.id.login_button_weibo);
-        mWeibo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        mNetease = (Button) findViewById(R.id.login_button_netease);
-        mNetease.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        mClearPhoneNumber = (LinearLayout) findViewById(R.id.register_phone_number_clear);
-        mClearPhoneNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPhoneNumber.setText("");
-            }
-        });
-
-        mClearPassword = (LinearLayout) findViewById(R.id.register_password_clear);
-        mClearPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPassword.setText("");
-            }
-        });
-
-        mPhoneNumber = (EditText) findViewById(R.id.register_phone_number);
-        mPhoneNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().equals("")) {
-                    mClearPhoneNumber.setVisibility(View.INVISIBLE);
-                    mCode.setTextColor(getResources().getColor(R.color.login_edit_text_clear));
-                } else {
-                    mClearPhoneNumber.setVisibility(View.VISIBLE);
-                    mCode.setTextColor(getResources().getColor(R.color.login_edit_text_normal));
-                }
-            }
-        });
-
-        mPassword=(EditText)findViewById(R.id.register_password);
-        mPassword.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().equals("")) {
-                    mClearPassword.setVisibility(View.INVISIBLE);
-                } else {
-                    mClearPassword.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.lqm_register_btn_finish:
+                register();
+                break;
+        }
     }
 }
